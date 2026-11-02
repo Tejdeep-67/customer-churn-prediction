@@ -46,7 +46,7 @@ def build_pipeline():
     return Pipeline([("prep", preprocess), ("model", model)])
 
 
-def export_for_web(pipe, path):
+def export_for_web(pipe, path, X_train, test_proba):
     """save scaler + one-hot + coefficients so the same maths can run in javascript"""
     prep = pipe.named_steps["prep"]
     scaler = prep.named_transformers_["num"]
@@ -67,6 +67,17 @@ def export_for_web(pipe, path):
         for c in cats:
             out["categorical"][col][str(c)] = float(coef[i])
             i += 1
+
+    # for the "why" chart in the demo: the average contribution of each feature over the
+    # training customers. A customer's bar = their contribution minus this average, so the
+    # bars show how they differ from a typical customer (numeric columns average to 0 already).
+    out["average_contribution"] = {}
+    for col in CAT_COLS:
+        freq = X_train[col].astype(str).value_counts(normalize=True)
+        out["average_contribution"][col] = float(sum(out["categorical"][col].get(k, 0) * v for k, v in freq.items()))
+
+    # percentiles of the test set scores, so the demo can say "riskier than x% of customers"
+    out["test_percentiles"] = [round(float(q), 4) for q in pd.Series(test_proba).quantile([i / 100 for i in range(101)])]
 
     with open(path, "w") as f:
         json.dump(out, f, indent=1)
@@ -96,7 +107,7 @@ def main():
     joblib.dump(pipe, os.path.join(BASE, "models", "churn_model.joblib"))
     with open(os.path.join(BASE, "models", "metrics.json"), "w") as f:
         json.dump(metrics, f, indent=2)
-    export_for_web(pipe, os.path.join(BASE, "docs", "model.json"))
+    export_for_web(pipe, os.path.join(BASE, "docs", "model.json"), X_train, proba)
     print("saved model to models/ and docs/model.json")
 
 
