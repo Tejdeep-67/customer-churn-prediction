@@ -3,86 +3,185 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Customer Churn Predictor | Tejdeep Kellampalli</title>
+  <title>Churn Predictor | Tejdeep Kellampalli</title>
+  <meta name="description" content="What-if churn simulator for telecom customers. A logistic regression model trained in Python, running in the browser.">
+  <meta name="theme-color" content="#0d0b14">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
 </head>
 <body>
-  <header>
-    <h1>Customer Churn Predictor</h1>
-    <p>Enter a telecom customer's details to see how likely they are to leave. The logistic regression model
-       was trained in Python and runs right here in your browser.</p>
+  <div class="bg" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="grain"></span></div>
+
+  <nav class="nav">
+    <a class="logo" href="#top" aria-label="Churn Predictor home">
+      <svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-dasharray="56 20" stroke-linecap="round"/><circle cx="14" cy="14" r="4" fill="#c6f432"/></svg>
+      <span>Churn <b>Predictor</b></span>
+    </a>
+    <div class="nav-links" role="tablist" aria-label="Sections">
+      <a href="#sim" class="is-active">Simulator</a>
+      <a href="#model">Model</a>
+      <a href="https://github.com/Tejdeep-67/customer-churn-prediction" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </nav>
+
+  <header class="hero" id="top">
+    <span class="pill"><i></i> model runs in your browser &middot; no server</span>
+    <h1>Will this customer <em>leave</em>?</h1>
+    <p>Change a telecom customer's plan and see their churn risk move in real time. Every number is explained, so you can see <strong>why</strong> the model thinks what it thinks and what would bring the risk down.</p>
+    <div class="presets" role="group" aria-label="Example customers">
+      <span>Try:</span>
+      <button type="button" data-preset="new">New fiber customer</button>
+      <button type="button" data-preset="loyal">Loyal family</button>
+      <button type="button" data-preset="mid">Average customer</button>
+    </div>
   </header>
 
-  <main>
-    <form id="form">
-      <fieldset>
-        <legend>Account</legend>
-        <label>Tenure (months)
+  <main class="app" id="sim">
+    <form id="form" class="inputs" autocomplete="off">
+      <section class="card">
+        <h2><span class="num">01</span> Account</h2>
+        <div class="field">
+          <div class="field-head"><label for="tenure">Tenure</label><output id="tenure-val" for="tenure">4 months</output></div>
           <input type="range" id="tenure" min="0" max="72" value="4">
-          <span class="val" id="tenure-val">4</span>
-        </label>
-        <label>Monthly charges ($)
+          <div class="ticks"><span>new</span><span>3 yrs</span><span>6 yrs</span></div>
+        </div>
+        <div class="field">
+          <div class="field-head"><label for="MonthlyCharges">Monthly bill</label><output id="MonthlyCharges-val" for="MonthlyCharges">$80</output></div>
           <input type="range" id="MonthlyCharges" min="18" max="120" value="80">
-          <span class="val" id="MonthlyCharges-val">80</span>
-        </label>
-        <label>Contract
-          <select id="Contract"><option>Month-to-month</option><option>One year</option><option>Two year</option></select>
-        </label>
-        <label>Payment method
-          <select id="PaymentMethod">
+          <div class="ticks"><span>$18</span><span>$69</span><span>$120</span></div>
+        </div>
+        <div class="field">
+          <span class="label">Contract</span>
+          <div class="seg" data-name="Contract">
+            <button type="button" data-v="Month-to-month" aria-pressed="true">Monthly</button>
+            <button type="button" data-v="One year" aria-pressed="false">1 year</button>
+            <button type="button" data-v="Two year" aria-pressed="false">2 years</button>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="PaymentMethod">Payment method</label>
+          <div class="select"><select id="PaymentMethod">
             <option>Electronic check</option><option>Mailed check</option>
             <option>Bank transfer (automatic)</option><option>Credit card (automatic)</option>
-          </select>
-        </label>
-        <label>Paperless billing
-          <select id="PaperlessBilling"><option>Yes</option><option>No</option></select>
-        </label>
-      </fieldset>
-
-      <fieldset>
-        <legend>Services</legend>
-        <label>Internet service
-          <select id="InternetService"><option>Fiber optic</option><option>DSL</option><option>No</option></select>
-        </label>
-        <div class="checks" id="addons">
-          <label><input type="checkbox" id="OnlineSecurity"> Online security</label>
-          <label><input type="checkbox" id="OnlineBackup"> Online backup</label>
-          <label><input type="checkbox" id="DeviceProtection"> Device protection</label>
-          <label><input type="checkbox" id="TechSupport"> Tech support</label>
-          <label><input type="checkbox" id="StreamingTV"> Streaming TV</label>
-          <label><input type="checkbox" id="StreamingMovies"> Streaming movies</label>
+          </select></div>
         </div>
-        <label>Phone service
-          <select id="PhoneService"><option>Yes</option><option>No</option></select>
-        </label>
-        <label>Multiple lines
-          <select id="MultipleLines"><option>No</option><option>Yes</option></select>
-        </label>
-      </fieldset>
+        <div class="field row">
+          <span class="label">Paperless billing</span>
+          <label class="switch"><input type="checkbox" id="PaperlessBilling" checked><span></span></label>
+        </div>
+      </section>
 
-      <fieldset>
-        <legend>Customer</legend>
-        <label>Gender <select id="gender"><option>Male</option><option>Female</option></select></label>
-        <label>Senior citizen <select id="SeniorCitizen"><option value="0">No</option><option value="1">Yes</option></select></label>
-        <label>Has partner <select id="Partner"><option>No</option><option>Yes</option></select></label>
-        <label>Has dependents <select id="Dependents"><option>No</option><option>Yes</option></select></label>
-      </fieldset>
+      <section class="card">
+        <h2><span class="num">02</span> Services</h2>
+        <div class="field">
+          <span class="label">Internet</span>
+          <div class="seg" data-name="InternetService">
+            <button type="button" data-v="Fiber optic" aria-pressed="true">Fiber</button>
+            <button type="button" data-v="DSL" aria-pressed="false">DSL</button>
+            <button type="button" data-v="No" aria-pressed="false">None</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="label">Add-ons</span>
+          <div class="chips" id="addons">
+            <label><input type="checkbox" id="OnlineSecurity"><span>Online security</span></label>
+            <label><input type="checkbox" id="TechSupport"><span>Tech support</span></label>
+            <label><input type="checkbox" id="OnlineBackup"><span>Online backup</span></label>
+            <label><input type="checkbox" id="DeviceProtection"><span>Device protection</span></label>
+            <label><input type="checkbox" id="StreamingTV"><span>Streaming TV</span></label>
+            <label><input type="checkbox" id="StreamingMovies"><span>Streaming movies</span></label>
+          </div>
+        </div>
+        <div class="field row">
+          <span class="label">Phone line</span>
+          <label class="switch"><input type="checkbox" id="PhoneService" checked><span></span></label>
+        </div>
+        <div class="field row">
+          <span class="label">Multiple lines</span>
+          <label class="switch"><input type="checkbox" id="MultipleLines"><span></span></label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2><span class="num">03</span> Customer</h2>
+        <div class="grid2">
+          <div class="field"><span class="label">Gender</span>
+            <div class="seg small" data-name="gender"><button type="button" data-v="Male" aria-pressed="true">Male</button><button type="button" data-v="Female" aria-pressed="false">Female</button></div></div>
+          <div class="field row"><span class="label">Senior citizen</span><label class="switch"><input type="checkbox" id="SeniorCitizen"><span></span></label></div>
+          <div class="field row"><span class="label">Has partner</span><label class="switch"><input type="checkbox" id="Partner"><span></span></label></div>
+          <div class="field row"><span class="label">Has dependents</span><label class="switch"><input type="checkbox" id="Dependents"><span></span></label></div>
+        </div>
+      </section>
     </form>
 
-    <aside id="result">
-      <div class="gauge">
-        <span id="prob">-</span>
-        <span class="small">chance of churn</span>
-      </div>
-      <div id="risk" class="risk">-</div>
-      <h3>Biggest risk factors</h3>
-      <ul id="reasons"></ul>
-      <p class="model-info">Model: logistic regression (balanced), test ROC-AUC 0.842, recall 78%.
-        Data: IBM Telco Customer Churn (7,043 customers).
-        <a href="https://github.com/Tejdeep-67/customer-churn-prediction">Code on GitHub</a></p>
+    <aside class="results">
+      <section class="card result" id="result" aria-live="polite">
+        <div class="gauge-wrap">
+          <svg class="gauge" viewBox="0 0 220 128" aria-hidden="true">
+            <defs>
+              <linearGradient id="gg" x1="0" x2="1" y1="0" y2="0">
+                <stop offset="0" stop-color="#c6f432"/><stop offset=".5" stop-color="#ffb547"/><stop offset="1" stop-color="#ff4d8d"/>
+              </linearGradient>
+            </defs>
+            <path class="g-track" d="M20 115 A90 90 0 0 1 200 115"/>
+            <path class="g-fill" id="g-fill" d="M20 115 A90 90 0 0 1 200 115"/>
+            <g class="needle" id="needle"><circle class="knob-glow" cx="110" cy="25" r="13"/><circle class="knob" cx="110" cy="25" r="7"/></g>
+          </svg>
+          <div class="g-center">
+            <span class="prob" id="prob">--</span>
+            <span class="prob-label">chance of churning</span>
+          </div>
+        </div>
+        <div class="badge-row">
+          <span class="badge" id="risk">--</span>
+          <span class="pct" id="pct">--</span>
+        </div>
+        <div class="pbar" aria-hidden="true"><span id="pbar-dot"></span></div>
+        <p class="pbar-note">position among the 1,409 test customers</p>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2>Why this score?</h2><span class="hint" id="baseline">vs a typical customer</span></div>
+        <ul class="drivers" id="drivers"></ul>
+        <p class="legend"><span class="up">pushes risk up</span><span class="down">pulls risk down</span></p>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><h2>What would help?</h2><span class="hint">tap to apply</span></div>
+        <div class="whatif" id="whatif"></div>
+      </section>
     </aside>
   </main>
 
-  <script src="app.js"></script>
+  <section class="model" id="model">
+    <div class="model-inner">
+      <h2>How the model works</h2>
+      <p class="lead">Trained in Python with scikit-learn on the IBM Telco Customer Churn data (7,043 customers, 26.5% churned). Out of logistic regression, random forest and gradient boosting, all landed around 0.84 ROC-AUC, so I kept the <b>balanced logistic regression</b>: same AUC, much better recall, and simple enough to run here in JavaScript.</p>
+      <div class="metrics">
+        <div class="metric"><span class="m-val" data-to="0.842" data-dec="3">0.842</span><span class="m-lbl">ROC-AUC</span></div>
+        <div class="metric"><span class="m-val" data-to="78.3" data-dec="1" data-suf="%">78.3%</span><span class="m-lbl">recall: churners caught</span></div>
+        <div class="metric"><span class="m-val" data-to="50.4" data-dec="1" data-suf="%">50.4%</span><span class="m-lbl">precision at 0.5</span></div>
+        <div class="metric"><span class="m-val" data-to="73.8" data-dec="1" data-suf="%">73.8%</span><span class="m-lbl">accuracy</span></div>
+      </div>
+      <p class="small-note">Scores on a stratified 20% test set (1,409 customers) the model never saw while training.</p>
+      <p class="small-note">One thing to know when reading the "why" bars: tenure, monthly charges and total charges are strongly correlated, so the model splits their effect between them and a higher bill can sometimes lower the score. That's why I show the two charge columns as one bar, and why I don't read single coefficients as cause and effect.</p>
+      <div class="how">
+        <div class="how-step"><span>1</span><h3>Scale + one-hot</h3><p>Tenure and charges are standardised with the training mean and std. Each category (contract, internet, ...) becomes a 0/1 column.</p></div>
+        <div class="how-step"><span>2</span><h3>Add up the weights</h3><p><code>z = intercept + &Sigma; coef &times; value</code>. The weights come from <code>model.json</code>, exported by <code>src/train.py</code>.</p></div>
+        <div class="how-step"><span>3</span><h3>Squash to a probability</h3><p><code>p = 1 / (1 + e<sup>&minus;z</sup>)</code>. The "why" bars are each feature's part of <code>z</code> minus the average part over the training customers.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>Built by Tejdeep Kellampalli &middot; data: IBM Telco Customer Churn sample dataset &middot; <a href="https://github.com/Tejdeep-67/customer-churn-prediction">code on GitHub</a></p>
+    <p class="muted">A demo on a public sample dataset, not a real company's customers.</p>
+  </footer>
+
+  <div class="mini" id="mini" aria-hidden="true"><span class="mini-prob" id="mini-prob">--</span><span class="mini-risk" id="mini-risk">--</span><a href="#result">see why &darr;</a></div>
 </body>
 </html>
