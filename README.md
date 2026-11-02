@@ -3,7 +3,7 @@
 End-to-end machine learning project: explore telecom customer data, find out why customers leave,
 train a model that predicts churn, and serve it through a Flask API and a web demo.
 
-**Live demo:** https://tejdeep-67.github.io/customer-churn-prediction/
+**Live demo:** https://tejdeep-churn-predictor.netlify.app
 
 ![web demo](images/web_demo.png)
 
@@ -29,8 +29,26 @@ whether they churned. The CSV is in `data/`.
    churners than the plain version, it's easy to explain, and it is small enough to run in the browser.
 5. **Deployment:**
    - `app.py`: Flask API, `POST /predict` returns the churn probability, risk level and top reasons
-   - `docs/`: static web demo on GitHub Pages. `src/train.py` exports the scaler and coefficients to `model.json`
-     and the page does the same calculation in JavaScript (checked it gives the same probability as Python).
+   - `docs/`: static web demo, hosted on Netlify. `src/train.py` exports the scaler and coefficients to `model.json`
+     and the page does the same calculation in JavaScript. `tests/test_web_model.py` checks that this formula gives
+     the same probability as the sklearn pipeline on 300 customers.
+
+## Web demo: what-if simulator
+
+The demo is meant to feel like a small tool a retention team could actually use:
+
+- Change the customer (tenure, bill, contract, internet, add-ons, payment...) and the **risk gauge** moves straight away.
+  It also says where the customer sits among the 1,409 test customers ("riskier than 82% of customers").
+- **Why this score?** For logistic regression the score is just a sum, so every feature's part of it can be shown.
+  Each bar is that feature's contribution minus the average contribution over the training customers, so the bars
+  show how this customer differs from a typical one. Monthly and total charges are shown as one bar because they
+  are correlated with tenure and pull in opposite directions on their own.
+- **What would help?** The page tries a few changes a retention team could offer (longer contract, free online security
+  or tech support, automatic payment), re-scores the customer for each one and lists the ones that lower the risk,
+  with how many points. Tapping one applies it.
+- Three example customers to start from, and a small floating score bar on phones.
+
+<img src="images/web_demo_mobile.png" width="300" alt="web demo on a phone">
 
 ## Results
 
@@ -71,8 +89,9 @@ customer-churn-prediction/
 ├── src/train.py                     # trains final model, exports model.json
 ├── app.py                           # Flask API
 ├── templates/index.html             # simple form for the Flask app
-├── tests/test_app.py                # pytest tests for the API
-├── docs/                            # web demo (GitHub Pages)
+├── tests/                           # pytest: API tests + browser formula vs sklearn
+├── docs/                            # web demo (static, deployed on Netlify)
+├── netlify.toml
 └── images/
 ```
 
@@ -106,7 +125,8 @@ Response:
 {"churn_probability": 0.793, "risk": "High", "top_reasons": ["tenure", "InternetService_Fiber optic", "Contract_Month-to-month"]}
 ```
 
-To view the web demo locally: `cd docs && python -m http.server 8000`.
+To view the web demo locally: `cd docs && python -m http.server 8000`. Netlify just publishes the `docs/` folder
+(see `netlify.toml`), there is no build step.
 
 ## Limitations
 
