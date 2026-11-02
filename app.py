@@ -46,6 +46,8 @@ def top_reasons(pipe, row, n=3):
     values = prep.transform(row)
     values = values.toarray()[0] if hasattr(values, "toarray") else np.asarray(values)[0]
     contrib = pd.Series(values * coef, index=prep.get_feature_names_out())
+    # skip the charge columns, they overlap with tenure/services (see notebook)
+    contrib = contrib.drop(["num__MonthlyCharges", "num__TotalCharges"])
     contrib = contrib[contrib > 0].sort_values(ascending=False).head(n)
     return [name.split("__", 1)[1] for name in contrib.index]
 
