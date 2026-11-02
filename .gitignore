@@ -5,3 +5,4 @@ venv/
 *.pyc
 .pytest_cache/
 .DS_Store
+models/*.joblib
