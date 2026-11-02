@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Churn Predictor | Tejdeep Kellampalli</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Customer Churn Predictor</h1>
+    <p>Enter a telecom customer's details to see how likely they are to leave. The logistic regression model
+       was trained in Python and runs right here in your browser.</p>
+  </header>
+
+  <main>
+    <form id="form">
+      <fieldset>
+        <legend>Account</legend>
+        <label>Tenure (months)
+          <input type="range" id="tenure" min="0" max="72" value="4">
+          <span class="val" id="tenure-val">4</span>
+        </label>
+        <label>Monthly charges ($)
+          <input type="range" id="MonthlyCharges" min="18" max="120" value="80">
+          <span class="val" id="MonthlyCharges-val">80</span>
+        </label>
+        <label>Contract
+          <select id="Contract"><option>Month-to-month</option><option>One year</option><option>Two year</option></select>
+        </label>
+        <label>Payment method
+          <select id="PaymentMethod">
+            <option>Electronic check</option><option>Mailed check</option>
+            <option>Bank transfer (automatic)</option><option>Credit card (automatic)</option>
+          </select>
+        </label>
+        <label>Paperless billing
+          <select id="PaperlessBilling"><option>Yes</option><option>No</option></select>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Services</legend>
+        <label>Internet service
+          <select id="InternetService"><option>Fiber optic</option><option>DSL</option><option>No</option></select>
+        </label>
+        <div class="checks" id="addons">
+          <label><input type="checkbox" id="OnlineSecurity"> Online security</label>
+          <label><input type="checkbox" id="OnlineBackup"> Online backup</label>
+          <label><input type="checkbox" id="DeviceProtection"> Device protection</label>
+          <label><input type="checkbox" id="TechSupport"> Tech support</label>
+          <label><input type="checkbox" id="StreamingTV"> Streaming TV</label>
+          <label><input type="checkbox" id="StreamingMovies"> Streaming movies</label>
+        </div>
+        <label>Phone service
+          <select id="PhoneService"><option>Yes</option><option>No</option></select>
+        </label>
+        <label>Multiple lines
+          <select id="MultipleLines"><option>No</option><option>Yes</option></select>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Customer</legend>
+        <label>Gender <select id="gender"><option>Male</option><option>Female</option></select></label>
+        <label>Senior citizen <select id="SeniorCitizen"><option value="0">No</option><option value="1">Yes</option></select></label>
+        <label>Has partner <select id="Partner"><option>No</option><option>Yes</option></select></label>
+        <label>Has dependents <select id="Dependents"><option>No</option><option>Yes</option></select></label>
+      </fieldset>
+    </form>
+
+    <aside id="result">
+      <div class="gauge">
+        <span id="prob">-</span>
+        <span class="small">chance of churn</span>
+      </div>
+      <div id="risk" class="risk">-</div>
+      <h3>Biggest risk factors</h3>
+      <ul id="reasons"></ul>
+      <p class="model-info">Model: logistic regression (balanced), test ROC-AUC 0.842, recall 78%.
+        Data: IBM Telco Customer Churn (7,043 customers).
+        <a href="https://github.com/Tejdeep-67/customer-churn-prediction">Code on GitHub</a></p>
+    </aside>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
