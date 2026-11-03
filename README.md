@@ -133,3 +133,7 @@ To view the web demo locally: `cd docs && python -m http.server 8000`. Netlify j
 - One snapshot of customers, so there is no time dimension (I can't see when someone churned).
 - In the web demo, total charges are estimated as tenure x monthly charges.
 - Charges are correlated with tenure and services, so their coefficients alone are not reliable explanations.
+
+## License
+
+MIT for the code, see [LICENSE](LICENSE). The Telco customer churn dataset keeps its original licence.
